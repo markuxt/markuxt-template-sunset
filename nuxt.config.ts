@@ -25,10 +25,10 @@ export default defineNuxtConfig({
         langDir: '../src/i18n',
     },
 
-    // Site-specific head — TODO: replace /images/favicon.png with your own
+    // Site-specific head — TODO: replace /images/logo.png with your own
     app: {
         head: {
-            link: [{ rel: 'icon', type: 'image/png', href: '/images/favicon.png' }],
+            link: [{ rel: 'icon', type: 'image/png', href: '/images/logo.png' }],
         },
     },
 
