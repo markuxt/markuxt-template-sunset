@@ -9,11 +9,19 @@ title: Your Title (e.g. Assistant Professor, PhD Candidate)
 email: demo-member@your-lab.edu
 scholar: https://scholar.google.com/citations?user=xxxxx
 
+# orcid [Optional]: Bare ORCID iD (e.g. 0000-0001-2345-5678). When this
+# matches an entry in a publication's `authors_orcid`, that publication is
+# listed on this member's page and this member is shown as a site-author on
+# the publication's page. (See src/publications/demo-publication.md.)
+orcid: 0000-0000-0000-0000
+
 # Recommended size: 400x400px (square), WebP preferred.
 # Replace this placeholder with your own photo (co-locate in assets/, or use /images/...).
 image: /images/logo.png
 
-# Member category — one of: staff | research-students | research-assistants | alumni
+# Member category. This template declares four in nuxt.config.ts:
+#   staff | research-students | research-assistants | alumni
+# Customize or replace them via `members.categories` (see README → Member categories).
 category: staff
 
 # Sort order within category (lower = earlier)

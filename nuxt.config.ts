@@ -88,6 +88,19 @@ export default defineNuxtConfig({
                 { icon: 'IconNeural', titleKey: 'research.area3', descKey: 'research.area3Desc' },
                 { icon: 'IconAssemblyLine', titleKey: 'research.area4', descKey: 'research.area4Desc' },
             ],
+
+            // Member categories shown on the Members page. `key` matches the
+            // `category:` field in each member's markdown; `labelKey` is an
+            // i18n key in src/i18n/*.json. Array order = display / filter /
+            // sort order. Customize freely — there are no built-in defaults.
+            members: {
+                categories: [
+                    { key: 'staff', labelKey: 'members.staff' },
+                    { key: 'research-students', labelKey: 'members.researchStudents' },
+                    { key: 'research-assistants', labelKey: 'members.researchAssistants' },
+                    { key: 'alumni', labelKey: 'members.alumni' },
+                ],
+            },
         },
     },
 });

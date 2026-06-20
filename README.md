@@ -12,8 +12,10 @@ Clone this template to spin up a multilingual (English / 简体中文) site for 
 
 - **Markdown-first content** — add members, news, publications, projects, and positions as `.md` files
 - **Multilingual** — English and Simplified Chinese out of the box (extensible)
+- **Configurable navigation & member categories** — define header/footer nav and the member groups entirely in `nuxt.config.ts`
+- **Rich Markdown** — Mermaid diagrams and LaTeX/KaTeX math render natively
 - **Co-located assets** — images/videos live next to their Markdown
-- **Themeable** — pick a preset in `nuxt.config.ts`, then fine-tune tokens in `styles/_tokens.css`
+- **Themeable** — the Seaside palette is plain CSS custom properties; override tokens in `styles/_tokens.css`
 - **Static deployment** — `pnpm generate` → deploy to GitHub Pages or any static host
 
 ## Tech Stack
@@ -42,7 +44,7 @@ pnpm install
 pnpm dev
 ```
 
-Open <http://localhost:3000>. You should see the homepage with a **Demo Member** and a **Welcome** news post.
+Open <http://localhost:3000>. Every content section ships with a visible, commented **demo** — a Demo Member, a Welcome news post, a Demo Project, a Demo Publication, and a Demo Position — so each page renders out of the box. Use them as worked examples, then replace them with your own content.
 
 ## Project Structure
 
@@ -83,21 +85,28 @@ Replace placeholder values in `en.json` and `zh-CN.json`:
 ```ts
 appConfig: {
   markuxt: {
-    theme: {
-      preset: 'ocean',                          // or 'forest' | 'sunset' | 'slate'
-    },
     logo: { src: '/images/logo.png' },            // → your logo
+    navigation: [ /* header/footer links + route guard */ ],
     contact: {
       email: 'contact@your-lab.edu',               // → your email
       externalUrl: 'https://your-university.edu',  // → your institution
     },
     carousel: { images: [ /* your photos */ ] },
-    researchAreas: [ /* homepage research cards */ ],
+    researchAreas: [ /* homepage feature cards */ ],
+    members: {
+      // Define your member groups here — there are no built-in defaults.
+      categories: [
+        { key: 'staff', labelKey: 'members.staff' },
+        { key: 'research-students', labelKey: 'members.researchStudents' },
+        { key: 'research-assistants', labelKey: 'members.researchAssistants' },
+        { key: 'alumni', labelKey: 'members.alumni' },
+      ],
+    },
   },
 }
 ```
 
-Theme presets are meant to be chosen in repo config, not switched by site visitors. `ocean` matches the original markuxt look; `forest`, `sunset`, and `slate` give you alternate palettes with the same component system.
+This template uses the **Seaside** palette. The look is driven entirely by CSS custom properties — override colors, fonts, and spacing in `styles/_tokens.css` (and site-level tweaks in `styles/_theme.css`). Other palettes (Forest, Sunset, Slate) are separate template repositories, not a config flag.
 
 ### 3. Images — `src/public/images/`
 
@@ -112,7 +121,7 @@ Reference them as `/images/<file>` (e.g. `/images/your-logo.png`).
 
 ### 4. Fine-tune design tokens — `styles/_tokens.css`
 
-After choosing a preset, you can still override colors, fonts, spacing, and other tokens:
+You can override colors, fonts, spacing, and other tokens directly:
 
 ```css
 :root {
@@ -124,7 +133,162 @@ After choosing a preset, you can still override colors, fonts, spacing, and othe
 
 ### 5. Content — `src/`
 
-Add Markdown files under the matching directory. Each directory has a `readme.md` documenting its frontmatter fields. See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full content guide.
+Add Markdown files under the matching directory. Each directory has a `readme.md` documenting its frontmatter and a commented **demo** file as a worked example. Schemas are in **Feature reference** below; see **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full content guide.
+
+---
+
+## Feature reference
+
+### Content types
+
+All content is authored as Markdown with YAML frontmatter, one file per item. Each directory under `src/` has a hidden `readme.md` documenting its full schema and a visible demo file.
+
+| Directory                 | Type                  | Listing page                      | Detail page                  |
+|---------------------------|-----------------------|-----------------------------------|------------------------------|
+| `src/members/<category>/` | Team profiles         | `/members`                        | `/members/<category>/<name>` |
+| `src/news/`               | News / announcements  | `/news`                           | `/news/<slug>`               |
+| `src/publications/`       | Papers                | `/publications` (grouped by year) | `/publications/<slug>`       |
+| `src/projects/`           | Projects              | `/projects`                       | `/projects/<slug>`           |
+| `src/positions/`          | Open positions        | `/positions`                      | `/positions/<slug>`          |
+
+#### **Member**
+
+```yaml
+---
+name: Jane Doe            # Required — display name
+role: Assistant Professor # Optional — shown on the card
+title: PhD                # Optional — academic title
+email: jane@your-lab.edu  # Optional
+scholar: https://scholar.google.com/... # Optional — profile URL
+orcid: 0000-0000-0000-0000              # Optional
+image: assets/jane.webp   # Optional — co-located photo or /images/...
+category: staff           # Required — must match a configured category (see below)
+order: 1                  # Optional — sort within category (lower = earlier)
+interests: [Robotics, Control Theory]   # Optional — shown as chips
+---
+```
+
+#### **News**
+
+```yaml
+---
+title: Launching our new website   # Required
+date: 2025-06-01                   # Required — drives ordering
+tags: [announcement, website]      # Optional
+description: A short summary       # Optional — used in lists/previews
+---
+```
+
+#### **Publication**
+
+```yaml
+---
+title: Decentralized Swarm Coordination # Required
+authors:                                 # Required — "LastName, FirstName"
+  - Doe, John
+authors_orcid:                           # Optional — parallel to authors; null = none
+  - 0000-0000-0000-0000                  # Matches a member's `orcid` → cross-links them
+year: 2025                               # Required — listing groups by year
+doi: https://doi.org/10.1000/...         # Optional
+venue: IEEE Transactions on Robotics     # Optional
+keywords: [control systems, UAV]         # Optional
+abstract_screenshot: doe2025.png         # Optional — abstract screenshot next to the .md
+---
+```
+
+#### **Project**
+
+```yaml
+---
+title: Autonomous Drone Swarm     # Required
+description: One-line summary      # Optional
+status: ongoing                   # Optional — open | ongoing | completed | maintained
+year: 2025                        # Optional
+image: assets/cover.webp          # Optional
+funded: true                      # Optional — shows a "Funded" badge
+---
+```
+
+#### **Position**
+
+```yaml
+---
+title: PhD Positions in Robotics  # Required
+description: Short summary         # Optional
+type: Students                     # Optional — free-form audience label
+year: 2025                         # Optional
+requirements:                      # Optional — bullet list
+  - Strong background in control theory
+email: phd@your-lab.edu           # Optional — application contact
+---
+```
+
+### Configurable navigation
+
+The `navigation` array controls three things at once:
+
+1. **Header links** — in the order you list them.
+2. **Footer quick links**.
+3. **Route guard** — any section page (`/members`, `/publications`, `/projects`, `/positions`, `/news`) that is **not** listed returns 404. The home page (`/`) is always accessible.
+
+So to hide a section entirely, simply omit it from `navigation`. Each item's `labelKey` is an i18n key resolved against `src/i18n/*.json`.
+
+### Member categories
+
+The groups on the Members page are **fully configurable** — there are no built-in defaults. Declare them in `nuxt.config.ts`; array order is the display, filter, and sort order:
+
+```ts
+members: {
+  categories: [
+    { key: 'staff', labelKey: 'members.staff' },
+    { key: 'research-students', labelKey: 'members.researchStudents' },
+    { key: 'alumni', labelKey: 'members.alumni' },
+  ],
+},
+```
+
+- `key` — the value you put in each member's `category:` frontmatter.
+- `labelKey` — the i18n key translated into the filter button, group heading, and profile badge.
+
+Add matching keys + translations to `src/i18n/en.json` and `src/i18n/zh-CN.json`. This template ships with four: `staff`, `research-students`, `research-assistants`, `alumni`. The Members page shows a filter bar when there are 2+ categories, plus an **All** option.
+
+### Internationalization (i18n)
+
+Built on `@nuxtjs/i18n` with English and Simplified Chinese included. The active locale is stored in an `i18n_locale` cookie and switchable via the header toggle.
+
+- **UI strings** live in `src/i18n/en.json` and `src/i18n/zh-CN.json`. The keys (e.g. `nav.home`, `members.staff`, `footer.brand`) are the Markuxt contract — keep every key, change only the values.
+- **Adding a locale:** add a new file (e.g. `ja.json`), register it in `nuxt.config.ts` under `i18n.locales`, and translate every key.
+- **Referencing strings in config:** fields like `navigation[].labelKey` and `members.categories[].labelKey` point at these keys, so the same config works in every language.
+
+### Co-located assets
+
+Place images and videos **next to** the Markdown that uses them (e.g. `src/members/staff/jane.webp` next to `jane.md`). At build time Markuxt syncs every non-document file into `public/_markuxt/` and rewrites the relative paths so they resolve on static hosting. Reference them relatively in frontmatter (`image: assets/jane.webp`) or the body (`![alt](jane.webp)`).
+
+Absolute `/images/...` paths (from `src/public/images/`) pass through unchanged.
+
+### Rich Markdown: Mermaid & math
+
+The content pipeline is pre-configured with:
+
+- **Mermaid** diagrams — write a fenced ` ```mermaid ` block and it renders to a diagram. See `src/projects/demo-project.md`.
+- **LaTeX math** via KaTeX — `$inline$` and `$$display$$`. See `src/publications/demo-publication.md`.
+
+Both are wired through `remark-math` + `rehype-katex`; no extra setup needed.
+
+### Theming & design tokens
+
+The **Seaside** look (ocean blue / teal) is applied entirely through CSS custom properties — there is no build-time theme switch.
+
+- **Fine-tune tokens** in `styles/_tokens.css` (`:root { --color-primary: ...; }`). Colors, fonts, spacing, radii, and shadows are all tokens.
+- **Site-level overrides** in `styles/_theme.css`.
+
+Markuxt ships three other palettes (Forest, Sunset, Slate) as separate template repositories — each is the same component system with different token values.
+
+### Dark / light mode
+
+A toggle in the header switches themes. The choice is persisted to `localStorage` (`markuxt-color-mode`); the default follows the OS preference. An inline head script sets the mode before first paint to avoid a flash.
+
+---
 
 ## Deployment
 

@@ -14,6 +14,13 @@ authors:
   - Doe, John
   - Smith, Jane
 
+# authors_orcid [Optional]: ORCID iD per author, PARALLEL to `authors` (use
+# null where an author has none). An ORCID matching a member's `orcid`
+# cross-links that member with this publication.
+authors_orcid:
+  - 0000-0000-0000-0000
+  - null
+
 # year [Required]: Publication year
 year: 2024
 
@@ -28,6 +35,10 @@ keywords:
   - control systems
   - robotics
   - UAV
+
+# abstract_screenshot [Optional]: Filename of a first-page / abstract
+# screenshot, co-located next to this .md. Shown above the abstract on the
+# card and detail page. Typically produced by the sync-publications action.
 ---
 
 ## Abstract
