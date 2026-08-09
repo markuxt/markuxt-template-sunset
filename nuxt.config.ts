@@ -16,13 +16,10 @@ export default defineNuxtConfig({
     // Register global icon components (outside src/ to avoid Content scanning)
     plugins: ['~~/plugins/icons.ts'],
 
-    // i18n — site-specific locales and translations
+    // i18n — locales are auto-detected and registered by the markuxt layer
+    // (from src/i18n/*.json); the consumer only needs defaultLocale here.
     i18n: {
-        locales: [
-            { code: 'en', name: 'English', file: 'en.json' },
-            { code: 'zh-CN', name: '简体中文', file: 'zh-CN.json' },
-        ],
-        langDir: '../src/i18n',
+        defaultLocale: 'en',
     },
 
     // Site-specific head — TODO: replace /images/logo.png with your own
@@ -32,7 +29,11 @@ export default defineNuxtConfig({
         },
     },
 
-    // Content directory — content lives directly in src/ (not src/content/)
+    // Content directory — content lives directly in src/ (not src/content/).
+    // Binary assets (images/videos/PDFs) are excluded from the content database
+    // by the @markuxt/markuxt layer (content.ignores) so their base64 bytes
+    // don't bloat api/_content/cache.*.json past GitHub Pages' 25MiB single-file
+    // limit.
     content: {
         sources: {
             content: {

@@ -1,5 +1,15 @@
 packages:
   - '.'
 
+allowBuilds:
+  '@markuxt/markuxt': true
+  '@parcel/watcher': true
+  esbuild: true
+  sharp: true
+  vue-demi: true
+
 ignoredBuiltDependencies:
   - '@markuxt/markuxt'
+
+minimumReleaseAgeExclude:
+  - '@markuxt/markuxt@0.1.39'

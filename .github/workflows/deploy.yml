@@ -11,6 +11,10 @@ on:
       - 'tsconfig.json'      # TypeScript configuration
       - 'app.config.ts'      # App configuration
       - '.github/workflows/deploy.yml' # Workflow file itself
+  # schedule:
+  #   # Weekly — re-syncs publications from OpenAlex (inline, below) and redeploys.
+  #   # Replaces the standalone sync-publications workflow.
+  #   - cron: "0 0 * * 0" # Sundays 00:00 UTC
   workflow_dispatch:
 
 # Sets permissions of GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -40,11 +44,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
           cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # - name: Sync publications from OpenAlex
+      #   uses: markuxt/sync-publications@main
+      #   with:
+      #     ror_id: 'https://ror.org/your_ror_id'
+      #     contact_email: 'you@your_email.net'
 
       - name: Compute base URL from repository name
         id: base_url
